@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from core.models import Question, Answer
+from core.models import Question, Answer, Poll
 
 
 def sample_user(username='username', password='password'):
@@ -64,3 +64,23 @@ class ModelsTests(TestCase):
 
         expected = f'{answer.question.id}-{answer.user.username}'
         self.assertEqual(str(answer), expected)
+
+    def test_create_poll_success(self):
+        """Test create poll"""
+        user = sample_user()
+        question = Question.objects.create(
+            title='How are you?',
+            type='TEXT',
+            user=user
+        )
+        poll = Poll.objects.create(
+            title='Profile poll',
+            description='Get personal info',
+            date_start='2020-05-15',
+            date_end='2020-06-15',
+            user=user
+        )
+        poll.questions.add(question)
+
+        self.assertEqual(str(poll), poll.title)
+        self.assertEqual(poll.questions.count(), 1)

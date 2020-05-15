@@ -35,3 +35,19 @@ class Answer(models.Model):
 
     def __str__(self):
         return f'{self.question.id}-{self.user.username}'
+
+
+class Poll(models.Model):
+    """Poll for users interview"""
+    title = models.CharField(max_length=255, unique=True)
+    description = models.CharField(max_length=255)
+    date_start = models.DateField(auto_now_add=True, blank=False)
+    date_end = models.DateField(auto_now=True, blank=True)
+    questions = models.ManyToManyField('Question')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.title
