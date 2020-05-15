@@ -12,7 +12,9 @@ class UserAdminTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.admin = get_user_model().objects.create_superuser(
-            'testadmin', 'testadminpass'
+            username='testadmin',
+            password='testadminpass',
+            email='admin@company.com'
         )
         self.client.force_login(user=self.admin)
         self.user = get_user_model().objects.create_user(
