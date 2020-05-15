@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from core import models
 
+
 class UserAdmin(BaseUserAdmin):
     """Admin page for User model"""
     list_display = ['username', 'first_name', 'last_name', 'is_staff']

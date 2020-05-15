@@ -4,6 +4,13 @@ from django.contrib.auth import get_user_model
 from core.models import Question
 
 
+def sample_user(username='username', password='password'):
+    """Create sample user"""
+    return get_user_model().objects.create_user(
+        username=username, password=password
+    )
+
+
 class ModelsTests(TestCase):
     """Testing project's models"""
 
@@ -32,10 +39,10 @@ class ModelsTests(TestCase):
 
     def test_create_question_success(self):
         """Test creating questions polls"""
-        payload = {
-            'title': 'How old are you?',
-            'type': 'Text response'
-        }
-        question = Question.objects.create(**payload)
+        question = Question.objects.create(
+            title='How old are you?',
+            type='TEXT',
+            user=sample_user()
+        )
 
-        self.assertEqual(str(question), payload['title'])
+        self.assertEqual(str(question), question.title)
