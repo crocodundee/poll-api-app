@@ -22,3 +22,16 @@ class Question(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Answer(models.Model):
+    """User answers on questions"""
+    content = models.CharField(max_length=255)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return f'{self.question.id}-{self.user.username}'

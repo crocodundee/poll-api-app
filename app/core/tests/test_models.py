@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from core.models import Question
+from core.models import Question, Answer
 
 
 def sample_user(username='username', password='password'):
@@ -46,3 +46,21 @@ class ModelsTests(TestCase):
         )
 
         self.assertEqual(str(question), question.title)
+
+    def test_create_answer_success(self):
+        """Test answer the question"""
+        user = sample_user()
+        question = Question.objects.create(
+            title='Whats up?',
+            type='TEXT',
+            user=user
+        )
+
+        answer = Answer.objects.create(
+            content="I'm fine!",
+            question=question,
+            user=user
+        )
+
+        expected = f'{answer.question.id}-{answer.user.username}'
+        self.assertEqual(str(answer), expected)
