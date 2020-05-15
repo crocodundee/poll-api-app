@@ -1,6 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
+from core.models import Question
+
 
 class ModelsTests(TestCase):
     """Testing project's models"""
@@ -27,3 +29,13 @@ class ModelsTests(TestCase):
 
         self.assertTrue(superuser.is_staff)
         self.assertTrue(superuser.is_superuser)
+
+    def test_create_question_success(self):
+        """Test creating questions polls"""
+        payload = {
+            'title': 'How old are you?',
+            'type': 'Text response'
+        }
+        question = Question.objects.create(**payload)
+
+        self.assertEqual(str(question), payload['title'])
