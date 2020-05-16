@@ -7,6 +7,7 @@ from poll import views
 router = DefaultRouter()
 router.register('questions', views.QuestionViewSet)
 router.register('answers', views.AnswerViewSet)
+router.register('polls', views.PollViewSet)
 
 app_name = 'poll'
 

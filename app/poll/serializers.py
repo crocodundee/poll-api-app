@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Question, Answer
+from core.models import Question, Answer, Poll
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -19,3 +19,19 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
         fields = ('id', 'content', 'question')
         read_only_fields = ('id',)
+
+
+class PollSerializer(serializers.ModelSerializer):
+    """Poll serializer"""
+    questions = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Question.objects.all()
+    )
+
+    class Meta:
+        model = Poll
+        fields = (
+            'id', 'title', 'description',
+            'date_start', 'date_end', 'questions'
+        )
+        read_only_fields = ('id', 'date_start',)

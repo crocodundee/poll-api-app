@@ -2,24 +2,28 @@ from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from core.models import Question, Answer
+from core.models import Question, Answer, Poll
 from poll import serializers
 
 
-class QuestionViewSet(viewsets.ModelViewSet):
-    """Manage questions in the database"""
+class AdminManageViewSet(viewsets.ModelViewSet):
+    """Admin operations viewset"""
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsAdminUser)
-    serializer_class = serializers.QuestionSerializer
-    queryset = Question.objects.all()
 
     def get_queryset(self):
-        """Retrive all created question"""
+        """Retrive all created objects"""
         return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        """Create new question"""
+        """Create new object"""
         serializer.save(user=self.request.user)
+
+
+class QuestionViewSet(AdminManageViewSet):
+    """Manage questions in the database"""
+    serializer_class = serializers.QuestionSerializer
+    queryset = Question.objects.all()
 
 
 class AnswerViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
@@ -37,3 +41,9 @@ class AnswerViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
     def perform_create(self, serializer):
         """Create new answer"""
         serializer.save(user=self.request.user)
+
+
+class PollViewSet(AdminManageViewSet):
+    """Viewset for manage poll"""
+    queryset = Poll.objects.all()
+    serializer_class = serializers.PollSerializer

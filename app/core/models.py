@@ -41,8 +41,8 @@ class Poll(models.Model):
     """Poll for users interview"""
     title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255)
-    date_start = models.DateField(auto_now_add=True, blank=False)
-    date_end = models.DateField(auto_now=True, blank=True)
+    date_start = models.DateField(auto_now_add=True)
+    date_end = models.DateField()
     questions = models.ManyToManyField('Question')
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
