@@ -12,5 +12,6 @@ router.register('polls', views.PollViewSet)
 app_name = 'poll'
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('done/', views.PollDoneViewSet.as_view({'get': 'list'}), name='poll-done')
 ]

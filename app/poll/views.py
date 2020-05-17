@@ -1,9 +1,15 @@
+from collections import namedtuple
+
 from rest_framework import viewsets, mixins
+from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from core.models import Question, Answer, Poll
 from poll import serializers
+
+
+PollsDone = namedtuple('PollsDone', ('poll', 'answers'))
 
 
 class AdminManageViewSet(viewsets.ModelViewSet):
@@ -46,4 +52,30 @@ class AnswerViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
 class PollViewSet(AdminManageViewSet):
     """Viewset for manage poll"""
     queryset = Poll.objects.all()
-    serializer_class = serializers.PollSerializer
+    serializer_class = serializers.PollDetailSerializer
+
+
+class PollDoneViewSet(viewsets.ViewSet):
+    """Viewset to list polls completed by current user"""
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        """Return answer objects of current authentication user only"""
+        answers = Answer.objects.filter(user=self.request.user)
+        result = []
+
+        if answers:
+            polls = Poll.objects.all()
+
+            for poll in polls:
+                questions = [q.id for q in poll.questions.all()]
+                response = answers.filter(question__id__in=questions)
+                if response:
+                    result.append(PollsDone(poll, response))
+
+            serializer = serializers.PollDoneSerializer(result, many=True)
+
+            return Response(serializer.data)
+
+        return Response({'error': 'You have not complete any poll'})
