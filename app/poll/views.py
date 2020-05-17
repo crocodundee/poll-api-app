@@ -17,8 +17,18 @@ class AdminManageViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, IsAdminUser)
 
+    def get_permissions(self):
+        """Set permissions for actions"""
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [IsAuthenticated, ]
+        else:
+            permission_classes = [IsAuthenticated, IsAdminUser]
+        return [permission() for permission in permission_classes]
+
     def get_queryset(self):
         """Retrive all created objects"""
+        if self.action in ['list', 'retrieve']:
+            return self.queryset
         return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
@@ -30,6 +40,18 @@ class QuestionViewSet(AdminManageViewSet):
     """Manage questions in the database"""
     serializer_class = serializers.QuestionSerializer
     queryset = Question.objects.all()
+
+
+class PollViewSet(AdminManageViewSet):
+    """Viewset for manage poll"""
+    queryset = Poll.objects.all()
+    serializer_class = serializers.PollDetailSerializer
+
+    def get_serializer_class(self):
+        """Set serializer for action in poll endpoint"""
+        if self.action in ['list', 'retrive']:
+            return serializers.PollDetailSerializer
+        return serializers.PollCrudSerializer
 
 
 class AnswerViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
@@ -47,12 +69,6 @@ class AnswerViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
     def perform_create(self, serializer):
         """Create new answer"""
         serializer.save(user=self.request.user)
-
-
-class PollViewSet(AdminManageViewSet):
-    """Viewset for manage poll"""
-    queryset = Poll.objects.all()
-    serializer_class = serializers.PollDetailSerializer
 
 
 class PollDoneViewSet(viewsets.ViewSet):
@@ -78,4 +94,4 @@ class PollDoneViewSet(viewsets.ViewSet):
 
             return Response(serializer.data)
 
-        return Response({'error': 'You have not complete any poll'})
+        return Response({'info': 'You have not complete any poll'})

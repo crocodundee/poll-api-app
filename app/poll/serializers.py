@@ -31,12 +31,8 @@ class AnswerDoneSerializer(serializers.ModelSerializer):
         fields = ('question', 'answer')
 
 
-class PollDetailSerializer(serializers.ModelSerializer):
+class BasePollSerializer(serializers.ModelSerializer):
     """Poll serializer"""
-    questions = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=Question.objects.all()
-    )
 
     class Meta:
         model = Poll
@@ -47,7 +43,24 @@ class PollDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'date_start',)
 
 
-class PollSerializer(serializers.ModelSerializer):
+class PollDetailSerializer(BasePollSerializer):
+    """Poll list serializer"""
+    questions = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='poll:question-detail'
+    )
+
+
+class PollCrudSerializer(BasePollSerializer):
+    """Poll CRUD serializer"""
+    questions = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Question.objects.all()
+    )
+
+
+class PollMainSerializer(serializers.ModelSerializer):
     """Short poll serializer"""
 
     class Meta:
@@ -57,5 +70,5 @@ class PollSerializer(serializers.ModelSerializer):
 
 class PollDoneSerializer(serializers.Serializer):
     """Serializer for polls compited by user"""
-    poll = PollSerializer()
+    poll = PollMainSerializer()
     answers = AnswerDoneSerializer(many=True)

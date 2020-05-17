@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Poll, Question
-from poll.serializers import PollSerializer
+from poll.serializers import PollCrudSerializer
 
 
 POLL_URL = reverse('poll:poll-list')
@@ -47,12 +47,12 @@ class PollEndpointCRUDTests(TestCase):
         self.assertEqual(res.status_code, status. HTTP_201_CREATED)
 
         poll = Poll.objects.get(title=payload['title'])
-        serializer = PollSerializer(poll)
+        serializer = PollCrudSerializer(poll)
 
         self.assertEqual(res.data, serializer.data)
 
     def test_update_poll(self):
-        """Test admin can update question"""
+        """Test admin can update poll"""
         poll = Poll.objects.create(
             title='Profile poll',
             description='Get personal info',
