@@ -28,3 +28,4 @@ I used Docker to build this app and it requires to install some dependencies to 
     ```
     docker-compose up
     ```
+### _Try it :point_right: [the-poll-api-app](https://the-poll-api-app.herokuapp.com)_
