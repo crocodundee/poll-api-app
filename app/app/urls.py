@@ -14,6 +14,6 @@ urlpatterns = [
     path('', include_docs_urls(title=API_TITLE, description=API_DESC)),
     path('admin/', admin.site.urls),
     path('api/user/', include('user.urls')),
-    path('api/poll/', include('poll.urls')),
-    path('schema/', schema_view)
+    path('api/polls/', include('poll.urls')),
+    path('schema/', schema_view),
 ]

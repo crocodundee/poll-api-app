@@ -19,8 +19,7 @@ class ModelsTests(TestCase):
         username = 'testuser'
         password = 'testpass'
         user = get_user_model().objects.create_user(
-            username=username,
-            password=password
+            username=username, password=password
         )
 
         self.assertEqual(user.username, username)
@@ -31,7 +30,7 @@ class ModelsTests(TestCase):
         superuser = get_user_model().objects.create_superuser(
             username='testsuperuser',
             password='testsuperpass',
-            email='admin@company.com'
+            email='admin@company.com',
         )
 
         self.assertTrue(superuser.is_staff)
@@ -40,9 +39,7 @@ class ModelsTests(TestCase):
     def test_create_question_success(self):
         """Test creating questions polls"""
         question = Question.objects.create(
-            title='How old are you?',
-            type='TEXT',
-            user=sample_user()
+            title='How old are you?', type='TEXT', user=sample_user()
         )
 
         self.assertEqual(str(question), question.title)
@@ -50,35 +47,30 @@ class ModelsTests(TestCase):
     def test_create_answer_success(self):
         """Test answer the question"""
         user = sample_user()
+        user_id = 'Lm678tr'
         question = Question.objects.create(
-            title='Whats up?',
-            type='TEXT',
-            user=user
+            title='Whats up?', type='TEXT', user=user
         )
 
         answer = Answer.objects.create(
-            content="I'm fine!",
-            question=question,
-            user=user
+            content="I'm fine!", question=question, user_id=user_id
         )
 
-        expected = f'{answer.question.id}-{answer.user.username}'
+        expected = f'{answer.question.id}-{answer.user_id}'
         self.assertEqual(str(answer), expected)
 
     def test_create_poll_success(self):
         """Test create poll"""
         user = sample_user()
         question = Question.objects.create(
-            title='How are you?',
-            type='TEXT',
-            user=user
+            title='How are you?', type='TEXT', user=user
         )
         poll = Poll.objects.create(
             title='Profile poll',
             description='Get personal info',
             date_start='2020-05-15',
             date_end='2020-06-15',
-            user=user
+            user=user,
         )
         poll.questions.add(question)
 
